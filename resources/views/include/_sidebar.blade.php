@@ -4,17 +4,25 @@
     <a class="nav-link" data-toggle="collapse" href="#system">
         System Management
         <ul class="list-group list-group-flush collapse" id="system">
-            <li class="list-group-item">Country</li>
-            <li class="list-group-item">State</li>
-            <li class="list-group-item">City</li>
-            <li class="list-group-item">Department</li>
+            <li class="list-group-item">
+                <a href="{{ route('country.index') }}">Country</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{{ route('state.index') }}">State</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{{ route('city.index') }}">City</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{{  route('department.index') }}">Department</a>
+            </li>
         </ul>
     </a>
     <a class="nav-link" data-toggle="collapse" href="#user">
         User Management
         <ul class="list-group list-group-flush collapse" id="user">
             <li class="list-group-item">
-                <a href="{{ route('users') }}">User</a>
+                <a href="{{ route('users.index') }}">User</a>
             </li>
             <li class="list-group-item">Role</li>
             <li class="list-group-item">Permission</li>

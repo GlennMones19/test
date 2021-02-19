@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +16,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('user');
+        $users = User::latest()->paginate(10);
+        $i = 1;
+        return view('user_management.user', compact(['users', 'i']));
     }
 
     /**
@@ -38,7 +39,23 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validate = $request->validate([
+            'c_username' => 'required',
+            'c_lastname' => 'required',
+            'c_firstname' => 'required',
+            'c_emailaddress' => 'required|email',
+            'c_password' => 'required',
+        ]);
+        $data = [
+            'username' => $request->c_username,
+            'lastname' => $request->c_lastname,
+            'firstname' => $request->c_firstname,
+            'email' => $request->c_emailaddress,
+            'password' => Hash::make($request->c_password),
+        ];
+        $user = User::create($data);
+      
+        return back()->with('success', 'User created successfully.');
     }
 
     /**
@@ -58,9 +75,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(User $user)
     {
-        //
+        return view('user_management.edit', compact('user'));
     }
 
     /**
@@ -70,9 +87,23 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id )
     {
-        //
+        $validate = $request->validate([
+            'u_username' => 'required',
+            'u_lastname' => 'required',
+            'u_firstname' => 'required',
+            'u_emailaddress' => 'required|email'
+        ]);
+        $data = [
+            'username' => $request->u_username,
+            'lastname' => $request->u_lastname,
+            'firstname' => $request->u_firstname,
+            'email' => $request->u_emailaddress,
+        ];
+        User::where('id', $id)->update($data);
+
+        return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
     /**
@@ -83,6 +114,20 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        User::where('id', $id)->delete();
+        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+    }
+
+    public function search(Request $request) 
+    {
+        $search = $request->user_search;
+        $users = User::where('username', 'like', '%'.$search.'%')
+            ->orWhere('lastname', 'like', '%'.$search.'%')
+            ->orWhere('firstname', 'like', '%'.$search.'%')
+            ->orWhere('email', 'like', '%'.$search.'%')
+            ->get();
+        $i = 1;
+        return view('user_management.user', compact(['users', 'i']));
+        
     }
 }

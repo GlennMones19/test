@@ -78,7 +78,9 @@
         <main class="py-4">
             <div class="d-flex" id="wrapper">
                 <div class="col-md-3">
-                    @include('include._sidebar')
+                   @auth
+                        @include('include._sidebar')   
+                   @endauth
                 </div>
                 <div class="col-md-9">
                     @yield('content')
